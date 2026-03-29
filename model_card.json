@@ -1,0 +1,31 @@
+{
+  "project": "AR benzene online theoretical predictor",
+  "type": "static-github-pages-app",
+  "language": "zh-CN",
+  "modules": [
+    {
+      "name": "AR risk",
+      "task": "Theoretical incident AR risk estimation",
+      "model_family": "Logistic-style score",
+      "outcome": "Predicted AR risk probability",
+      "formula": "lp = -4.2 + 1.9*(benzene-0.43) + 0.95*I(asthma) + 0.31*I(smoke) + 0.12*((age-58)/10) + 0.21*I(htn) - 0.14*I(male)"
+    },
+    {
+      "name": "AR survival",
+      "task": "Theoretical post-AR survival estimation",
+      "model_family": "Cox-style score with parametric baseline approximation",
+      "outcome": "Predicted 3y/5y/8y survival",
+      "formula": "lp = 0.39*((age-58)/10) + 0.64*I(smoke) + 0.28*kdm + 0.19*((benzene-0.43)/0.075) + 0.34*I(diabetes) + 0.17*I(male); S(t)=exp(-h0*t*exp(lp))"
+    }
+  ],
+  "deployment": {
+    "target": "GitHub Pages",
+    "entry": "index.html"
+  },
+  "limitations": [
+    "For demonstration and publication planning only",
+    "Not clinically validated",
+    "Not for medical decision making",
+    "Theoretical formulas anchored to manuscript-style reference results"
+  ]
+}

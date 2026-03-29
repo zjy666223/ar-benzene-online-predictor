@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AR 苯暴露在线预测器</title>
+    <meta
+      name="description"
+      content="基于理论参考公式的 AR 风险与 AR 后生存在线预测器。适用于论文展示、结果沟通与教学演示。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">UK Biobank • Theoretical Reference Tool</p>
+          <h1>AR 苯暴露在线预测器</h1>
+          <p class="hero-text">
+            保留你当前理论模型的公式结构，补成一个可在线访问、可分享、可演示的网页版本。
+            适用于论文展示、答辩沟通和结果预览，不用于临床决策。
+          </p>
+          <div class="hero-chips">
+            <span>理论参考</span>
+            <span>双模块计算</span>
+            <span>GitHub Pages 可部署</span>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="hero-stat">
+            <span class="hero-stat-label">风险模块</span>
+            <strong>AR incident risk</strong>
+            <small>苯暴露 + 共病 + 吸烟 + 人口学</small>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-label">生存模块</span>
+            <strong>AR post-diagnosis survival</strong>
+            <small>苯暴露 + 年龄 + KDM + 代谢风险</small>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="module-switch" aria-label="预测模块切换">
+          <button class="switch-btn active" data-target="risk-panel">AR 风险预测</button>
+          <button class="switch-btn" data-target="survival-panel">AR 生存预测</button>
+        </section>
+
+        <section id="risk-panel" class="panel active">
+          <div class="panel-grid">
+            <div class="card form-card">
+              <div class="card-head">
+                <h2>输入参数</h2>
+                <p>用于估计过敏性鼻炎发生风险。</p>
+              </div>
+
+              <div class="control-grid">
+                <label class="control">
+                  <span>苯暴露浓度 (μg/m³)</span>
+                  <div class="range-wrap">
+                    <input id="risk-benzene" type="range" min="0.20" max="1.50" step="0.01" value="0.58" />
+                    <input id="risk-benzene-number" type="number" min="0.20" max="1.50" step="0.01" value="0.58" />
+                  </div>
+                </label>
+
+                <label class="control">
+                  <span>年龄</span>
+                  <div class="range-wrap">
+                    <input id="risk-age" type="range" min="40" max="80" step="1" value="58" />
+                    <input id="risk-age-number" type="number" min="40" max="80" step="1" value="58" />
+                  </div>
+                </label>
+
+                <label class="control">
+                  <span>性别</span>
+                  <select id="risk-sex">
+                    <option value="Female">女</option>
+                    <option value="Male">男</option>
+                  </select>
+                </label>
+
+                <label class="control">
+                  <span>哮喘</span>
+                  <select id="risk-asthma">
+                    <option value="No">否</option>
+                    <option value="Yes">是</option>
+                  </select>
+                </label>
+
+                <label class="control">
+                  <span>当前吸烟</span>
+                  <select id="risk-smoke">
+                    <option value="No">否</option>
+                    <option value="Yes">是</option>
+                  </select>
+                </label>
+
+                <label class="control">
+                  <span>高血压</span>
+                  <select id="risk-htn">
+                    <option value="No">否</option>
+                    <option value="Yes">是</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button id="risk-reset" class="ghost-btn">重置风险模块</button>
+              </div>
+            </div>
+
+            <div class="card result-card">
+              <div class="card-head">
+                <h2>预测结果</h2>
+                <p>结果会随输入实时刷新。</p>
+              </div>
+
+              <div class="result-top">
+                <div id="risk-gauge" class="gauge">
+                  <div class="gauge-inner">
+                    <span class="gauge-label">Predicted risk</span>
+                    <strong id="risk-value">1.9%</strong>
+                    <small id="risk-band">Intermediate</small>
+                  </div>
+                </div>
+
+                <div class="result-summary">
+                  <div class="metric-row">
+                    <span>相对基线变化</span>
+                    <strong id="risk-delta">+0.4 pct</strong>
+                  </div>
+                  <div class="metric-row">
+                    <span>参考输入</span>
+                    <strong>58 岁 / 女 / 无哮喘 / 不吸烟 / 无高血压</strong>
+                  </div>
+                  <div class="metric-row">
+                    <span>当前解读</span>
+                    <strong id="risk-interpretation">中等预测风险</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mini-chart-block">
+                <div class="mini-title-row">
+                  <h3>苯暴露响应曲线</h3>
+                  <span>固定其余输入，仅改变苯浓度</span>
+                </div>
+                <svg id="risk-curve" viewBox="0 0 420 180" class="chart-svg" aria-label="AR 风险曲线"></svg>
+              </div>
+
+              <div class="mini-chart-block">
+                <div class="mini-title-row">
+                  <h3>影响因子贡献</h3>
+                  <span>按 logit 贡献方向展示</span>
+                </div>
+                <div id="risk-contrib" class="contrib-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="survival-panel" class="panel">
+          <div class="panel-grid">
+            <div class="card form-card">
+              <div class="card-head">
+                <h2>输入参数</h2>
+                <p>用于估计 AR 诊断后的随访生存概况。</p>
+              </div>
+
+              <div class="control-grid">
+                <label class="control">
+                  <span>年龄</span>
+                  <div class="range-wrap">
+                    <input id="surv-age" type="range" min="40" max="80" step="1" value="58" />
+                    <input id="surv-age-number" type="number" min="40" max="80" step="1" value="58" />
+                  </div>
+                </label>
+
+                <label class="control">
+                  <span>性别</span>
+                  <select id="surv-sex">
+                    <option value="Female">女</option>
+                    <option value="Male">男</option>
+                  </select>
+                </label>
+
+                <label class="control">
+                  <span>当前吸烟</span>
+                  <select id="surv-smoke">
+                    <option value="No">否</option>
+                    <option value="Yes">是</option>
+                  </select>
+                </label>
+
+                <label class="control">
+                  <span>KDM (标准化值)</span>
+                  <div class="range-wrap">
+                    <input id="surv-kdm" type="range" min="-2.0" max="3.0" step="0.1" value="0.8" />
+                    <input id="surv-kdm-number" type="number" min="-2.0" max="3.0" step="0.1" value="0.8" />
+                  </div>
+                </label>
+
+                <label class="control">
+                  <span>苯暴露浓度 (μg/m³)</span>
+                  <div class="range-wrap">
+                    <input id="surv-benzene" type="range" min="0.20" max="1.50" step="0.01" value="0.58" />
+                    <input id="surv-benzene-number" type="number" min="0.20" max="1.50" step="0.01" value="0.58" />
+                  </div>
+                </label>
+
+                <label class="control">
+                  <span>糖尿病</span>
+                  <select id="surv-diabetes">
+                    <option value="No">否</option>
+                    <option value="Yes">是</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button id="surv-reset" class="ghost-btn">重置生存模块</button>
+              </div>
+            </div>
+
+            <div class="card result-card">
+              <div class="card-head">
+                <h2>预测结果</h2>
+                <p>采用理论 Cox 风险分数和基线生存率近似计算。</p>
+              </div>
+
+              <div class="survival-metrics">
+                <div class="survival-kpi">
+                  <span>3 年生存</span>
+                  <strong id="surv-3y">97.8%</strong>
+                </div>
+                <div class="survival-kpi">
+                  <span>5 年生存</span>
+                  <strong id="surv-5y">96.5%</strong>
+                </div>
+                <div class="survival-kpi">
+                  <span>8 年生存</span>
+                  <strong id="surv-8y">94.4%</strong>
+                </div>
+              </div>
+
+              <div class="result-summary">
+                <div class="metric-row">
+                  <span>当前解读</span>
+                  <strong id="surv-interpretation">较好的随访生存轮廓</strong>
+                </div>
+                <div class="metric-row">
+                  <span>相对风险</span>
+                  <strong id="surv-hr">HR proxy 1.00</strong>
+                </div>
+              </div>
+
+              <div class="mini-chart-block">
+                <div class="mini-title-row">
+                  <h3>预测生存曲线</h3>
+                  <span>按指数型基线危险近似外推 10 年</span>
+                </div>
+                <svg id="survival-curve" viewBox="0 0 420 220" class="chart-svg" aria-label="生存曲线"></svg>
+              </div>
+
+              <div class="mini-chart-block">
+                <div class="mini-title-row">
+                  <h3>风险贡献</h3>
+                  <span>按线性预测值贡献展示</span>
+                </div>
+                <div id="surv-contrib" class="contrib-list"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card share-card">
+          <div class="card-head">
+            <h2>分享与说明</h2>
+            <p>生成结果摘要，复制链接，方便答辩和团队讨论。</p>
+          </div>
+
+          <div class="share-actions">
+            <button id="copy-summary" class="primary-btn">复制当前摘要</button>
+            <button id="copy-link" class="ghost-btn">复制当前链接</button>
+          </div>
+
+          <textarea id="summary-output" readonly>
+这里会显示当前模块的结果摘要。
+          </textarea>
+
+          <div class="notice">
+            <strong>注意：</strong>
+            本网页基于理论参考公式构建，仅用于论文展示、结果预览和方法沟通，不用于临床决策，也不代表最终外部验证后的正式模型。
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
