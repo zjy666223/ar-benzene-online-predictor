@@ -97,12 +97,12 @@ function survInputs() {
 
 function computeRisk(values) {
   const terms = [
-    { name: "苯暴露", value: 1.9 * (values.benzene - 0.43) },
-    { name: "年龄", value: 0.12 * ((values.age - 58) / 10) },
-    { name: "男性", value: values.sex === "Male" ? -0.14 : 0 },
-    { name: "哮喘", value: values.asthma === "Yes" ? 0.95 : 0 },
-    { name: "当前吸烟", value: values.smoke === "Yes" ? 0.31 : 0 },
-    { name: "高血压", value: values.htn === "Yes" ? 0.21 : 0 },
+    { name: "Benzene", value: 1.9 * (values.benzene - 0.43) },
+    { name: "Age", value: 0.12 * ((values.age - 58) / 10) },
+    { name: "Male sex", value: values.sex === "Male" ? -0.14 : 0 },
+    { name: "Asthma", value: values.asthma === "Yes" ? 0.95 : 0 },
+    { name: "Current smoking", value: values.smoke === "Yes" ? 0.31 : 0 },
+    { name: "Hypertension", value: values.htn === "Yes" ? 0.21 : 0 },
   ];
 
   const intercept = -4.2;
@@ -119,12 +119,12 @@ function computeRisk(values) {
 
 function computeSurvival(values) {
   const terms = [
-    { name: "年龄", value: 0.39 * ((values.age - 58) / 10) },
-    { name: "当前吸烟", value: values.smoke === "Yes" ? 0.64 : 0 },
+    { name: "Age", value: 0.39 * ((values.age - 58) / 10) },
+    { name: "Current smoking", value: values.smoke === "Yes" ? 0.64 : 0 },
     { name: "KDM", value: 0.28 * values.kdm },
-    { name: "苯暴露", value: 0.19 * ((values.benzene - 0.43) / 0.075) },
-    { name: "糖尿病", value: values.diabetes === "Yes" ? 0.34 : 0 },
-    { name: "男性", value: values.sex === "Male" ? 0.17 : 0 },
+    { name: "Benzene", value: 0.19 * ((values.benzene - 0.43) / 0.075) },
+    { name: "Diabetes", value: values.diabetes === "Yes" ? 0.34 : 0 },
+    { name: "Male sex", value: values.sex === "Male" ? 0.17 : 0 },
   ];
 
   const lp = terms.reduce((sum, item) => sum + item.value, 0);
@@ -151,15 +151,15 @@ function riskBand(prob) {
 }
 
 function riskBandText(prob) {
-  if (prob < 0.01) return "低预测风险";
-  if (prob < 0.02) return "中等预测风险";
-  return "较高预测风险";
+  if (prob < 0.01) return "Low risk";
+  if (prob < 0.02) return "Intermediate risk";
+  return "High risk";
 }
 
 function survivalBandText(s5) {
-  if (s5 > 0.96) return "较好的随访生存轮廓";
-  if (s5 > 0.92) return "中等随访生存轮廓";
-  return "较高的随访风险轮廓";
+  if (s5 > 0.96) return "Favorable survival profile";
+  if (s5 > 0.92) return "Intermediate survival profile";
+  return "Higher follow-up risk";
 }
 
 function updateGauge(prob) {
@@ -396,32 +396,32 @@ function updateSummary() {
     const v = survInputs();
     const r = computeSurvival(v);
     summaryOutput.value = [
-      "AR 生存预测摘要",
-      `年龄: ${v.age} 岁`,
-      `性别: ${v.sex === "Male" ? "男" : "女"}`,
-      `当前吸烟: ${v.smoke === "Yes" ? "是" : "否"}`,
+      "AR survival summary",
+      `Age: ${v.age}`,
+      `Sex: ${v.sex}`,
+      `Current smoking: ${v.smoke}`,
       `KDM: ${v.kdm.toFixed(1)}`,
-      `苯暴露: ${v.benzene.toFixed(2)} μg/m³`,
-      `糖尿病: ${v.diabetes === "Yes" ? "是" : "否"}`,
-      `3年生存: ${pct(r.s3)}`,
-      `5年生存: ${pct(r.s5)}`,
-      `8年生存: ${pct(r.s8)}`,
+      `Benzene: ${v.benzene.toFixed(2)} μg/m³`,
+      `Diabetes: ${v.diabetes}`,
+      `3-year survival: ${pct(r.s3)}`,
+      `5-year survival: ${pct(r.s5)}`,
+      `8-year survival: ${pct(r.s8)}`,
       `HR proxy: ${r.hrProxy.toFixed(2)}`,
-      `解读: ${survivalBandText(r.s5)}`,
+      `Interpretation: ${survivalBandText(r.s5)}`,
     ].join("\n");
   } else {
     const v = riskInputs();
     const r = computeRisk(v);
     summaryOutput.value = [
-      "AR 风险预测摘要",
-      `苯暴露: ${v.benzene.toFixed(2)} μg/m³`,
-      `年龄: ${v.age} 岁`,
-      `性别: ${v.sex === "Male" ? "男" : "女"}`,
-      `哮喘: ${v.asthma === "Yes" ? "是" : "否"}`,
-      `当前吸烟: ${v.smoke === "Yes" ? "是" : "否"}`,
-      `高血压: ${v.htn === "Yes" ? "是" : "否"}`,
-      `预测风险: ${pct(r.prob)}`,
-      `解读: ${riskBandText(r.prob)}`,
+      "AR risk summary",
+      `Benzene: ${v.benzene.toFixed(2)} μg/m³`,
+      `Age: ${v.age}`,
+      `Sex: ${v.sex}`,
+      `Asthma: ${v.asthma}`,
+      `Current smoking: ${v.smoke}`,
+      `Hypertension: ${v.htn}`,
+      `Predicted risk: ${pct(r.prob)}`,
+      `Interpretation: ${riskBandText(r.prob)}`,
     ].join("\n");
   }
 }
@@ -572,17 +572,17 @@ panelButtons.forEach((btn) =>
 
 copySummaryBtn.addEventListener("click", async () => {
   await navigator.clipboard.writeText(summaryOutput.value);
-  copySummaryBtn.textContent = "已复制摘要";
+  copySummaryBtn.textContent = "Copied";
   setTimeout(() => {
-    copySummaryBtn.textContent = "复制当前摘要";
+    copySummaryBtn.textContent = "Copy summary";
   }, 1400);
 });
 
 copyLinkBtn.addEventListener("click", async () => {
   await navigator.clipboard.writeText(location.href);
-  copyLinkBtn.textContent = "已复制链接";
+  copyLinkBtn.textContent = "Copied";
   setTimeout(() => {
-    copyLinkBtn.textContent = "复制当前链接";
+    copyLinkBtn.textContent = "Copy link";
   }, 1400);
 });
 
